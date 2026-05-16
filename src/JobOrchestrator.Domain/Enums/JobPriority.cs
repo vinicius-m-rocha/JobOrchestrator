@@ -1,0 +1,8 @@
+﻿namespace JobOrchestrator.Domain.Enums;
+
+public enum JobPriority
+{
+    Low = 0,
+    Normal = 1,
+    High = 2
+}
