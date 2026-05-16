@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/JobOrchestrator.Api/JobOrchestrator.Api.csproj" />
+    <Project Path="src/JobOrchestrator.Application/JobOrchestrator.Application.csproj" />
+    <Project Path="src/JobOrchestrator.Domain/JobOrchestrator.Domain.csproj" />
+    <Project Path="src/JobOrchestrator.Infrastructure/JobOrchestrator.Infrastructure.csproj" />
+    <Project Path="src/JobOrchestrator.Worker/JobOrchestrator.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/JobOrchestrator.Application.Tests/JobOrchestrator.Application.Tests.csproj" />
+    <Project Path="tests/JobOrchestrator.Domain.Tests/JobOrchestrator.Domain.Tests.csproj" />
+  </Folder>
+</Solution>
