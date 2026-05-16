@@ -19,7 +19,7 @@ services:
       start_period: 30s
 
   rabbitmq:
-    image: heidiks/rabbitmq-delayed-message-exachange:latest
+    image: heidiks/rabbitmq-delayed-message-exchange:latest
     container_name: ochestrator_rabbitmq
     restart: always
     ports:
