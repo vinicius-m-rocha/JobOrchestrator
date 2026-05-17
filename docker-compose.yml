@@ -3,24 +3,21 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:latest
-    container_name: ochestrator_mongo
+    container_name: orchestrator_mongo
     restart: always
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: admin
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     healthcheck:
-      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"mongodb:27017\"}]}).ok || rs.status().ok" | mongo -u admin -p admin --quiet) -eq 1
+      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"localhost:27017\"}]}).ok || rs.status().ok" | mongosh --quiet) -eq 1
       interval: 10s
       start_period: 30s
 
   rabbitmq:
     image: heidiks/rabbitmq-delayed-message-exchange:latest
-    container_name: ochestrator_rabbitmq
+    container_name: orchestrator_rabbitmq
     restart: always
     ports:
       - "5672:5672"
