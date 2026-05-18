@@ -1,23 +1,40 @@
-using JobOrchestrator.Worker.Consumers;
 using MassTransit;
+using JobOrchestrator.Worker.Consumers;
+using JobOrchestrator.Worker.Registry;
 
 namespace JobOrchestrator.Worker.Extensions;
 
-public static class ServiceCollectionExtensions
+public static class AddWorkerServicesExtensions
 {
     public static IServiceCollection AddWorkerServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMassTransit(busConfig =>
-        {
-            busConfig.AddConsumer<JobEnqueuedEventConsumer>();
+        services.AddSingleton<IActiveJobRegistry, ActiveJobRegistry>();
 
-            busConfig.UsingRabbitMq((context, rabbitConfig) =>
+        services.AddHttpClient();
+
+        services.AddMassTransit(x =>
+        {
+            x.AddConsumer<JobEnqueuedEventConsumer>();
+            x.AddConsumer<JobCanceledIntegrationEventConsumer>();
+
+            x.UsingRabbitMq((context, cfg) =>
             {
                 var rabbitConnString = configuration.GetConnectionString("RabbitMq")
-                                    ?? throw new InvalidOperationException("RabbitMQ connection string is missing.");
+                                ?? throw new InvalidOperationException("RabbitMQ connection string is missing.");
+                cfg.Host(rabbitConnString);
 
-                rabbitConfig.Host(rabbitConnString);
-                rabbitConfig.ConfigureEndpoints(context);
+                cfg.ReceiveEndpoint("job-execution-queue", e =>
+                {
+                    e.PrefetchCount = 10;
+                    e.ConfigureConsumer<JobEnqueuedEventConsumer>(context);
+                });
+
+                var instanceId = Guid.NewGuid().ToString("N");
+                cfg.ReceiveEndpoint($"job-cancellation-queue-{instanceId}", e =>
+                {
+                    e.AutoDelete = true;
+                    e.ConfigureConsumer<JobCanceledIntegrationEventConsumer>(context);
+                });
             });
         });
 

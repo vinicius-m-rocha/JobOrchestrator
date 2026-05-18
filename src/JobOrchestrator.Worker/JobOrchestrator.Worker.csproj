@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JobOrchestrator.Application\JobOrchestrator.Application.csproj" />
+    <ProjectReference Include="..\JobOrchestrator.Infrastructure\JobOrchestrator.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

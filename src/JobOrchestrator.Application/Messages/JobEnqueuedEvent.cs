@@ -3,7 +3,7 @@
 namespace JobOrchestrator.Application.Messages;
 
 public record JobEnqueuedEvent(
-    string JobId,
+    Guid JobId,
     JobPriority Priority,
     string Payload,
     string WebhookUrl,
