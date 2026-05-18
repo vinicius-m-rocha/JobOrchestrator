@@ -6,8 +6,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.2.2" />
+    <PackageReference Include="MassTransit.MongoDb" Version="8.2.2" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.8" />
-    <PackageReference Include="MongoDB.Driver" Version="3.8.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.25.0" />
+    <PackageReference Include="SharpCompress" Version="0.37.2" />
   </ItemGroup>
 
   <PropertyGroup>
