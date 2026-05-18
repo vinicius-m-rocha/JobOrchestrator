@@ -8,14 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddApplicationService();
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services
+    .AddApplicationService()
+    .AddInfrastructure(builder.Configuration)
+    .AddInfrastructureMessagingService(builder.Configuration);
 
-builder.Services.AddProblemDetails();
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services
+    .AddProblemDetails()
+    .AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services
+    .AddEndpointsApiExplorer()
+    .AddOpenApi();
 
 var app = builder.Build();
 
@@ -30,7 +34,5 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
-
 app.MapJobEndpoints();
-
 app.Run();
