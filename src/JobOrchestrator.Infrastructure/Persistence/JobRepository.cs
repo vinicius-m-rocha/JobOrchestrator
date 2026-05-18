@@ -2,13 +2,14 @@
 using JobOrchestrator.Domain.Entities;
 using JobOrchestrator.Domain.Interfaces;
 using MassTransit;
+using MassTransit.MongoDbIntegration;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace JobOrchestrator.Infrastructure.Persistence;
 
 public class JobRepository(
-    IMongoClient mongoClient,
+    MongoDbContext mongoDbContext,
     IMongoDatabase database,
     IOptions<DatabaseSettings> databaseSettings,
     IPublishEndpoint publishEndpoint) : IJobRepository
@@ -17,20 +18,19 @@ public class JobRepository(
 
     public async Task CreateAsync(Job job, CancellationToken cancellationToken = default)
     {
-        using var session = await mongoClient.StartSessionAsync(cancellationToken: cancellationToken);
-        session.StartTransaction();
+        await mongoDbContext.BeginTransaction(cancellationToken: cancellationToken);
 
         try
         {
-            await _collection.InsertOneAsync(session, job, cancellationToken: cancellationToken);
+            await _collection.InsertOneAsync(mongoDbContext.Session, job, cancellationToken: cancellationToken);
             var message = new JobEnqueuedEvent(job.Id, job.Priority, job.Payload, job.ScheduledAt);
 
             await publishEndpoint.Publish(message, cancellationToken);
-            await session.CommitTransactionAsync(cancellationToken);
+            await mongoDbContext.CommitTransaction(cancellationToken);
         }
         catch
         {
-            await session.AbortTransactionAsync(cancellationToken);
+            await mongoDbContext.AbortTransaction(cancellationToken);
             throw;
         }
     }
