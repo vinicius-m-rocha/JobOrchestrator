@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using JobOrchestrator.Api.Extensions.Logs;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +12,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         Exception exception,
         CancellationToken cancellationToken)
     {
-        logger.LogError(exception, "An unexpected error occurred.");
+        logger.LogUnhandledException(exception);
 
         if (exception is ValidationException validationException)
         {
