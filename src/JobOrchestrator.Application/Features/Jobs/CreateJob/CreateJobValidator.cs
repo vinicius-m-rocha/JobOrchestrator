@@ -10,6 +10,9 @@ public class CreateJobValidator : AbstractValidator<CreateJobCommand>
             .NotEmpty().WithMessage("IdempotencyKey is required.")
             .MaximumLength(100).WithMessage("IdempotencyKey must not exceed 100 characters.");
 
+        RuleFor(x => x.WebhookUrl)
+        .NotEmpty().WithMessage("WebhookUrl is required.");
+
         RuleFor(x => x.Priority)
             .IsInEnum().WithMessage("Invalid job priority.");
 

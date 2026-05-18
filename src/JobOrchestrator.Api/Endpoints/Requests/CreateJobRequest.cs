@@ -6,6 +6,7 @@ namespace JobOrchestrator.Api.Endpoints.Requests;
 
 public record CreateJobRequest(
     JobPriority Priority,
+    string WebhookUrl,
     string Payload,
     DateTime? ScheduledAt)
 {
@@ -14,6 +15,7 @@ public record CreateJobRequest(
         return new CreateJobCommand(
             Priority,
             Payload,
+            WebhookUrl,
             ScheduledAt,
             idempotencyKey
         );

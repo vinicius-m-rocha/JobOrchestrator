@@ -29,7 +29,9 @@ public static class InfrastrutureServiceCollectionExtensions
             return client.GetDatabase(databaseName);
         });
 
-        services.AddScoped<IJobRepository, JobRepository>();
+        services
+            .AddScoped<IJobRepository, JobRepository>()
+            .AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
