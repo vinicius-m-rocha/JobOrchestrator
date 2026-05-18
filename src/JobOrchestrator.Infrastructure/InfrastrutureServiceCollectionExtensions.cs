@@ -16,7 +16,7 @@ public static class InfrastrutureServiceCollectionExtensions
         services.AddSingleton<IMongoClient>(sp =>
         {
             var connectionString = configuration.GetConnectionString("MongoDb");
-            return new MongoClient(connectionString);
+            return new MongoClient(connectionString!);
         });
 
         services.Configure<DatabaseSettings>(configuration.GetSection("DatabaseSettings"));
