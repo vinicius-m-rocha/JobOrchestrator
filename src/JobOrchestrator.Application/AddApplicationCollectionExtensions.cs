@@ -14,7 +14,9 @@ public static class AddApplicationCollectionExtensions
         {
             cfg.RegisterServicesFromAssembly(assembly);
 
-            cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            cfg
+                .AddOpenBehavior(typeof(ValidationBehavior<,>))
+                .AddOpenBehavior(typeof(TransactionBehavior<,>));
         });
 
         services.AddValidatorsFromAssembly(assembly);
