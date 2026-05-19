@@ -5,7 +5,8 @@ var builder = Host.CreateApplicationBuilder(args);
 
 builder.Services
     .AddInfrastructure(builder.Configuration)
-    .AddWorkerServices(builder.Configuration);
+    .AddWorkerServices(builder.Configuration)
+    .AddRetryPolicy();
 
 var host = builder.Build();
 host.Run();
