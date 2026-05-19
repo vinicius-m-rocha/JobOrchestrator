@@ -1,4 +1,6 @@
-﻿using JobOrchestrator.Domain.Interfaces;
+﻿using JobOrchestrator.Application.Messages;
+using JobOrchestrator.Domain.Interfaces;
+using JobOrchestrator.Infrastructure.Messaging.Filters;
 using JobOrchestrator.Infrastructure.Persistence;
 using MassTransit;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +18,7 @@ public static class InfrastrutureServiceCollectionExtensions
         services.AddSingleton<IMongoClient>(sp =>
         {
             var connectionString = configuration.GetConnectionString("MongoDb");
-            return new MongoClient(connectionString!);
+            return new MongoClient(connectionString);
         });
 
         services.Configure<DatabaseSettings>(configuration.GetSection("DatabaseSettings"));
@@ -31,6 +33,7 @@ public static class InfrastrutureServiceCollectionExtensions
 
         services
             .AddScoped<IJobRepository, JobRepository>()
+            .AddScoped<IWorkerJobRepository, WorkerJobRepository>()
             .AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
@@ -38,8 +41,12 @@ public static class InfrastrutureServiceCollectionExtensions
 
     public static IServiceCollection AddInfrastructureMessagingService(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped(typeof(JobEnqueuedEventPublishFilter<>), typeof(JobEnqueuedEventPublishFilter<>));
+
         services.AddMassTransit(busConfig =>
         {
+            busConfig.AddDelayedMessageScheduler();
+
             busConfig.AddMongoDbOutbox(outboxConfig =>
             {
                 outboxConfig.ClientFactory(sp => sp.GetRequiredService<IMongoClient>());
@@ -60,6 +67,8 @@ public static class InfrastrutureServiceCollectionExtensions
                     ?? throw new InvalidOperationException("RabbitMQ connection string is not configured.");
 
                 rabbitConfig.Host(new Uri(rabbitConnString));
+                rabbitConfig.UseDelayedMessageScheduler();
+                rabbitConfig.UsePublishFilter(typeof(JobEnqueuedEventPublishFilter<>), context, cfg => cfg.Include<JobEnqueuedEvent>());
                 rabbitConfig.ConfigureEndpoints(context);
             });
         });

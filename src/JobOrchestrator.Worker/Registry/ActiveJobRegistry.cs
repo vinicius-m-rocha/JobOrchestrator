@@ -5,14 +5,14 @@ namespace JobOrchestrator.Worker.Registry;
 
 public class ActiveJobRegistry : IActiveJobRegistry
 {
-    private readonly ConcurrentDictionary<Guid, CancellationTokenSource> _activeJobs = new();
+    private readonly ConcurrentDictionary<string, CancellationTokenSource> _activeJobs = new();
 
-    public bool TryRegistry(Guid jobId, CancellationTokenSource cancellationTokenSource)
+    public bool TryRegistry(string jobId, CancellationTokenSource cancellationTokenSource)
     {
         return _activeJobs.TryAdd(jobId, cancellationTokenSource);
     }
 
-    public void Deregister(Guid jobId)
+    public void Deregister(string jobId)
     {
         if (_activeJobs.TryRemove(jobId, out var cts))
         {
@@ -20,7 +20,7 @@ public class ActiveJobRegistry : IActiveJobRegistry
         }
     }
 
-    public bool TryCancel(Guid jobId)
+    public bool TryCancel(string jobId)
     {
         if (_activeJobs.TryGetValue(jobId, out var cts))
         {
