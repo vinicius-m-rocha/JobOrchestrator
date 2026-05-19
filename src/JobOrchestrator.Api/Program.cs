@@ -1,12 +1,15 @@
-using JobOrchestrator.Api.Enpoints;
+using JobOrchestrator.Api.Endpoints.Auth;
+using JobOrchestrator.Api.Endpoints.Jobs;
+using JobOrchestrator.Api.Extensions;
 using JobOrchestrator.Api.Middlewares;
 using JobOrchestrator.Application;
 using JobOrchestrator.Infrastructure;
 using Scalar.AspNetCore;
+using JobOrchestrator.Infrastructure.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
+builder.AddCustomLogging();
 
 builder.Services
     .AddApplicationService()
@@ -19,7 +22,12 @@ builder.Services
 
 builder.Services
     .AddEndpointsApiExplorer()
-    .AddOpenApi();
+    .AddOpenApi()
+    .AddAuthenticationService(builder.Configuration)
+    .AddAuthorization();
+
+builder.Services
+    .AddCustomHealthChecks(builder.Configuration);
 
 var app = builder.Build();
 
@@ -33,6 +41,11 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseExceptionHandler();
 app.MapJobEndpoints();
+app.MapAuthEndpoints();
+app.MapCustomHealthChecks();
+
 app.Run();
