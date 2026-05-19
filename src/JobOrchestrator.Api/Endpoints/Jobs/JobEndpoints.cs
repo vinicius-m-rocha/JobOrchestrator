@@ -1,16 +1,18 @@
-﻿using JobOrchestrator.Api.Endpoints.Requests;
+﻿using JobOrchestrator.Api.Endpoints.Jobs.Requests;
 using JobOrchestrator.Application.Features.Jobs.Cancel;
 using JobOrchestrator.Application.Features.Jobs.CreateJob;
+using JobOrchestrator.Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace JobOrchestrator.Api.Enpoints;
+namespace JobOrchestrator.Api.Endpoints.Jobs;
 
 public static class JobEndpoints
 {
-    public static void MapJobEndpoints(this WebApplication app)
+    public static void MapJobEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api;v1/jobs")
+        var group = app.MapGroup("/api/v1/jobs")
+            .RequireAuthorization()
             .WithTags("Jobs");
 
         group.MapPost("/", CreateJob)

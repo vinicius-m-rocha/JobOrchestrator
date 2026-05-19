@@ -2,7 +2,7 @@
 using JobOrchestrator.Application.Features.Jobs.CreateJob;
 using JobOrchestrator.Domain.Enums;
 
-namespace JobOrchestrator.Api.Endpoints.Requests;
+namespace JobOrchestrator.Api.Endpoints.Jobs.Requests;
 
 public record CreateJobRequest(
     JobPriority Priority,
