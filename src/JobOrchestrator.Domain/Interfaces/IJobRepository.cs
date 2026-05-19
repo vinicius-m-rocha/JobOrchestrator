@@ -8,4 +8,5 @@ public interface IJobRepository
     Task<Job?> GetByIdempotencyKeyAsync(string idempotencyKey, CancellationToken cancellationToken = default);
     Task<Job?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
     Task UpdateAsync(Job job, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Job>> GetAllAsync(CancellationToken cancellationToken = default);
 }

@@ -5,7 +5,7 @@ namespace JobOrchestrator.Api.Extensions;
 
 public static class OpenApiExtensions
 {
-    public static IServiceCollection AddOpenApi(this IServiceCollection services)
+    public static IServiceCollection AddOpenApiConfig(this IServiceCollection services)
     {
         services.AddOpenApi(options =>
         {

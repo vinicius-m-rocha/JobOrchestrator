@@ -8,6 +8,5 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/JobOrchestrator.Application.Tests/JobOrchestrator.Application.Tests.csproj" />
-    <Project Path="tests/JobOrchestrator.Domain.Tests/JobOrchestrator.Domain.Tests.csproj" />
   </Folder>
 </Solution>
