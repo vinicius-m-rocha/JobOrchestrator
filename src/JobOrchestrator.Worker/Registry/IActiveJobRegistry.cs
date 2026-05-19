@@ -2,7 +2,7 @@
 
 public interface IActiveJobRegistry
 {
-    bool TryRegistry(Guid jobId, CancellationTokenSource cancellationToken);
-    void Deregister(Guid jobId);
-    bool TryCancel(Guid jobId);
+    bool TryRegistry(string jobId, CancellationTokenSource cancellationToken);
+    void Deregister(string jobId);
+    bool TryCancel(string jobId);
 }

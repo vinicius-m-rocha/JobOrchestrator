@@ -3,4 +3,4 @@ using MediatR;
 
 namespace JobOrchestrator.Application.Features.Jobs.Cancel;
 
-public record CancelJobCommand(Guid JobId) : IRequest<bool>, ITransactionalCommand;
+public record CancelJobCommand(string JobId) : IRequest<bool>, ITransactionalCommand;

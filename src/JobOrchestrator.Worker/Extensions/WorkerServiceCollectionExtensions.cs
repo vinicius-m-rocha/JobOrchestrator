@@ -4,7 +4,7 @@ using JobOrchestrator.Worker.Registry;
 
 namespace JobOrchestrator.Worker.Extensions;
 
-public static class AddWorkerServicesExtensions
+public static class WorkerServiceCollectionExtensions
 {
     public static IServiceCollection AddWorkerServices(this IServiceCollection services, IConfiguration configuration)
     {
@@ -22,10 +22,11 @@ public static class AddWorkerServicesExtensions
                 var rabbitConnString = configuration.GetConnectionString("RabbitMq")
                                 ?? throw new InvalidOperationException("RabbitMQ connection string is missing.");
                 cfg.Host(rabbitConnString);
-
+                cfg.UseDelayedMessageScheduler();
                 cfg.ReceiveEndpoint("job-execution-queue", e =>
                 {
-                    e.PrefetchCount = 10;
+                    e.PrefetchCount = 1;
+                    e.EnablePriority(10);
                     e.ConfigureConsumer<JobEnqueuedEventConsumer>(context);
                 });
 

@@ -19,7 +19,6 @@ public static class JobEndpoints
             .WithName("CreateJob")
             .WithSummary("Enqueues a new job for asynchronous processing");
 
-
         group.MapDelete("/{jobId:guid}", CancelJob)
             .Produces(StatusCodes.Status202Accepted)
             .Produces(StatusCodes.Status404NotFound)
@@ -40,7 +39,7 @@ public static class JobEndpoints
     }
 
     public static async Task<IResult> CancelJob(
-        [FromRoute] Guid jobId,
+        [FromRoute] string jobId,
         IMediator mediator,
         CancellationToken cancellationToken)
     {

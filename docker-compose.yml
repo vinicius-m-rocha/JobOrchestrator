@@ -26,5 +26,11 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
 
+  webhook-simulator:
+    image: kennethreitz/httpbin
+    container_name: webhook-simulator
+    ports:
+      - "8080:80"
+
 volumes:
   mongo_data:

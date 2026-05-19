@@ -1,3 +1,3 @@
 namespace JobOrchestrator.Application.Messages;
 
-public record JobCanceledIntegrationEvent(Guid JobId);
+public record JobCanceledIntegrationEvent(string JobId);

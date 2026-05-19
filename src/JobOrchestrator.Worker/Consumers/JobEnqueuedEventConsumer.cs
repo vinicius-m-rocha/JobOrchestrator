@@ -2,7 +2,6 @@
 using MassTransit;
 using JobOrchestrator.Worker.Extensions.Logs;
 using JobOrchestrator.Domain.Interfaces;
-using JobOrchestrator.Domain.Entities;
 using JobOrchestrator.Domain.Enums;
 using System.Text;
 using JobOrchestrator.Worker.Registry;
@@ -13,19 +12,18 @@ public class JobEnqueuedEventConsumer(
     ILogger<JobEnqueuedEventConsumer> logger,
     IActiveJobRegistry activeJobRegistry,
     IHttpClientFactory httpClientFactory,
-    IJobRepository jobRepository) : IConsumer<JobEnqueuedEvent>
+    IWorkerJobRepository jobRepository) : IConsumer<JobEnqueuedEvent>
 {
     public async Task Consume(ConsumeContext<JobEnqueuedEvent> context)
     {
         JobEnqueuedEvent message = context.Message;
-        string jobId = message.JobId.ToString();
 
-        var job = await jobRepository.GetByIdAsync(jobId, context.CancellationToken);
+        var job = await jobRepository.GetByIdAsync(message.JobId, context.CancellationToken);
 
         if (job is null || job.Status == JobStatus.Cancelled)
             return;
 
-        logger.LogProcessingStarted(jobId, message.Priority.ToString());
+        logger.LogProcessingStarted(message.JobId, message.Priority.ToString());
 
         try
         {
@@ -48,11 +46,11 @@ public class JobEnqueuedEventConsumer(
         catch (OperationCanceledException ex)
         {
             job.Cancel();
-            logger.LogJobAborted(jobId, ex);
+            logger.LogJobAborted(message.JobId, ex);
         }
         catch (Exception ex)
         {
-            logger.LogProcessingFailed(jobId, ex);
+            logger.LogProcessingFailed(message.JobId, ex);
             job.MarkAsFailed();
             throw;
         }
