@@ -1,6 +1,8 @@
 using MassTransit;
 using JobOrchestrator.Worker.Consumers;
 using JobOrchestrator.Worker.Registry;
+using Polly;
+using Microsoft.Extensions.Http.Resilience;
 
 namespace JobOrchestrator.Worker.Extensions;
 
@@ -38,6 +40,27 @@ public static class WorkerServiceCollectionExtensions
                 });
             });
         });
+
+        return services;
+    }
+
+    public static IServiceCollection AddRetryPolicy(this IServiceCollection services)
+    {
+
+        services.AddHttpClient("WebhookClient")
+            .AddResilienceHandler("webhook-retry", (builder, context) =>
+            {
+                var logger = context.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("Polly.Retry");
+
+                builder.AddTimeout(TimeSpan.FromSeconds(15));
+
+                builder.AddRetry(new HttpRetryStrategyOptions
+                {
+                    MaxRetryAttempts = 3,
+                    Delay = TimeSpan.FromSeconds(2),
+                    BackoffType = DelayBackoffType.Exponential
+                });
+            });
 
         return services;
     }
