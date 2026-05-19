@@ -11,7 +11,7 @@ services:
       - mongo_data:/data/db
     command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017"]
     healthcheck:
-      test: test $$(echo "rs.initiate({_id:'rs0',members:[{_id:0,host:\"localhost:27017\"}]}).ok || rs.status().ok" | mongosh --quiet) -eq 1
+      test: ["CMD", "mongosh", "--quiet", "--eval", "try { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017'}]}) } catch(e) {} rs.status().ok ? quit(0) : quit(1)"]
       interval: 10s
       start_period: 30s
 
@@ -32,5 +32,54 @@ services:
     ports:
       - "8080:80"
 
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_NOAUTHENTICATION=True
+    ports:
+      - "5341:80"
+    volumes:
+      - seq_data:/data
+
+  api:
+    build:
+      context: .
+      dockerfile: src/JobOrchestrator.Api/Dockerfile
+    container_name: joborchestrator_api
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MongoDb=mongodb://mongodb:27017/?replicaSet=rs0
+      - ConnectionStrings__RabbitMq=amqp://guest:guest@rabbitmq:5672
+      - Serilog__WriteTo__1__Args__serverUrl=http://seq:80
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      seq:
+        condition: service_started
+
+  worker:
+    build:
+      context: .
+      dockerfile: src/JobOrchestrator.Worker/Dockerfile
+    container_name: joborchestrator-worker
+    environment:
+      - ConnectionStrings__MongoDb=mongodb://mongodb:27017/?replicaSet=rs0
+      - ConnectionStrings__RabbitMq=amqp://guest:guest@rabbitmq:5672
+      - Serilog__WriteTo__1__Args__serverUrl=http://seq:80
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+      seq:
+        condition: service_started
+
 volumes:
   mongo_data:
+  seq_data:
