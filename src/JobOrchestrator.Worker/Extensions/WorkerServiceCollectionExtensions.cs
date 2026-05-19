@@ -12,8 +12,6 @@ public static class WorkerServiceCollectionExtensions
     {
         services.AddSingleton<IActiveJobRegistry, ActiveJobRegistry>();
 
-        services.AddHttpClient();
-
         services.AddMassTransit(x =>
         {
             x.AddConsumer<JobEnqueuedEventConsumer>();

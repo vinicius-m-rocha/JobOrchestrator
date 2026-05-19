@@ -45,7 +45,6 @@ public class CreateJobHandler(
             logger.LogJobCreationError(request.IdempotencyKey, ex);
             throw;
         }
-
     }
 
     public async Task PublishAsync(JobEnqueuedEvent jobCreatedEvent, CancellationToken cancellationToken)

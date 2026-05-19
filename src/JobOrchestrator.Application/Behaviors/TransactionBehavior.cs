@@ -4,7 +4,7 @@ using JobOrchestrator.Domain.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace JobOrchestrator.Application;
+namespace JobOrchestrator.Application.Behaviors;
 
 public class TransactionBehavior<TRequest, TResponse>(
     ILogger<TransactionBehavior<TRequest, TResponse>> logger,

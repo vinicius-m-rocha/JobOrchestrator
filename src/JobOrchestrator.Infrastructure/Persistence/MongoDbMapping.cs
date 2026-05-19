@@ -1,8 +1,5 @@
-﻿using System.Runtime.InteropServices;
-using System.Security.Cryptography;
-using JobOrchestrator.Domain.Entities;
+﻿using JobOrchestrator.Domain.Entities;
 using JobOrchestrator.Domain.Enums;
-using JobOrchestrator.Domain.ValuesObjects;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
@@ -20,11 +17,6 @@ public static class MongoDbMapping
 
             cm.MapProperty(j => j.Priority).SetSerializer(new EnumSerializer<JobPriority>(BsonType.String));
             cm.MapProperty(j => j.Status).SetSerializer(new EnumSerializer<JobStatus>(BsonType.String));
-        });
-
-        BsonClassMap.RegisterClassMap<ExecutionAttempt>(cm =>
-        {
-            cm.AutoMap();
         });
     }
 }

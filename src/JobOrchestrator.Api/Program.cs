@@ -28,10 +28,6 @@ builder.Services
 
 var app = builder.Build();
 
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-var mongoConn = builder.Configuration.GetConnectionString("MongoDb") ?? builder.Configuration["ConnectionStrings:MongoDb"];
-logger.LogInformation("Effective MongoDb connection string: {MongoConn}", mongoConn);
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
