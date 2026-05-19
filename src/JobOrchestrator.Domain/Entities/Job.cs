@@ -1,5 +1,4 @@
 ﻿using JobOrchestrator.Domain.Enums;
-using JobOrchestrator.Domain.ValuesObjects;
 
 namespace JobOrchestrator.Domain.Entities;
 
@@ -19,9 +18,6 @@ public class Job(
     public DateTime? ScheduledAt { get; private set; } = scheduledAt;
     public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
     public JobStatus Status { get; private set; } = status;
-
-    private readonly List<ExecutionAttempt> _executionAttempts = [];
-    public IReadOnlyCollection<ExecutionAttempt> ExecutionAttempts => _executionAttempts.AsReadOnly();
 
     public void MarkAsProcessing()
     {

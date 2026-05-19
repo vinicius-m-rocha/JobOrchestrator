@@ -1,7 +1,7 @@
 ﻿using JobOrchestrator.Domain.Interfaces;
 using MassTransit.MongoDbIntegration;
 
-namespace JobOrchestrator.Infrastructure;
+namespace JobOrchestrator.Infrastructure.Persistence;
 
 public class UnitOfWork(MongoDbContext mongoDbContext) : IUnitOfWork
 {

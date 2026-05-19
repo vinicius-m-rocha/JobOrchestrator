@@ -42,7 +42,8 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
         {
             Status = StatusCodes.Status500InternalServerError,
             Title = "Internal Server Error",
-            Detail = "An unexpected error occurred. Please check the logs."
+            Detail = exception.Message
+            // Detail = "An unexpected error occurred. Please check the logs."
         }, cancellationToken);
 
         return true;
