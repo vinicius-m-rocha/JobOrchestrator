@@ -26,6 +26,11 @@ public static class JobEndpoints
             .Produces(StatusCodes.Status404NotFound)
             .WithName("CancelJob")
             .WithSummary("Requests cancellation of a job that is currently being processed or is queued for processing");
+
+        group.MapGet("/", GetAllJobs)
+            .Produces(StatusCodes.Status200OK)
+            .WithName("GetAllJobs")
+            .WithSummary("Returns all jobs");
     }
 
     public static async Task<IResult> CreateJob(
@@ -54,5 +59,13 @@ public static class JobEndpoints
         }
 
         return Results.Accepted(value: new { Message = "Cancellation requested successfully." });
+    }
+
+    public static async Task<IResult> GetAllJobs(
+        IJobRepository repository,
+        CancellationToken cancellationToken)
+    {
+        var jobs = await repository.GetAllAsync(cancellationToken);
+        return Results.Ok(jobs);
     }
 }

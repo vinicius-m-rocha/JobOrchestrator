@@ -21,14 +21,22 @@ public class JobRepository(
     public async Task<Job?> GetByIdempotencyKeyAsync(string idempotencyKey, CancellationToken cancellationToken = default)
     {
         return await _collection
-            .Find(mongoDbContext.Session, j => j.IdempotencyKey == idempotencyKey)
+            .Find(j => j.IdempotencyKey == idempotencyKey)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
     }
 
     public async Task<Job?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        return await _collection.Find(mongoDbContext.Session, j => j.Id == id)
+        return await _collection.Find(j => j.Id == id)
             .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Job>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var filter = Builders<Job>.Filter.Empty;
+        var find = _collection.Find(filter);
+
+        return await find.ToListAsync(cancellationToken: cancellationToken);
     }
 
     public async Task UpdateAsync(Job job, CancellationToken cancellationToken = default)

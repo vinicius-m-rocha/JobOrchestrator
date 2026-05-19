@@ -22,12 +22,9 @@ builder.Services
 
 builder.Services
     .AddEndpointsApiExplorer()
-    .AddOpenApi()
+    .AddOpenApiConfig()
     .AddAuthenticationService(builder.Configuration)
     .AddAuthorization();
-
-builder.Services
-    .AddCustomHealthChecks(builder.Configuration);
 
 var app = builder.Build();
 
@@ -46,6 +43,5 @@ app.UseAuthorization();
 app.UseExceptionHandler();
 app.MapJobEndpoints();
 app.MapAuthEndpoints();
-app.MapCustomHealthChecks();
 
 app.Run();
